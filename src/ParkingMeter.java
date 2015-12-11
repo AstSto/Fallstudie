@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class ParkingMeter {
-	 
+	 //HALLO ÜBER GIT
 	/**
 	 * defines values of coins in the boxes. <br>Example:<br>
 	 * <code> 0.50, 1.00 and 2.00 €</code>
