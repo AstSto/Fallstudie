@@ -247,7 +247,9 @@ public class ParkingMeter {
 
 	// TODO AUFGABE4 Fehler beheben: Buchung der Parkgebühr auf die Münzeinheiten
 	private static void bookParkingCoins (int[] parkCoins) {
-
+		for (int i=0; i<coinsParkingMeter.length; i++){
+			coinsParkingMeter[i] += parkCoins[i];
+		}
 	}
 
 	/**
