@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class ParkingMeter {
-	 
+
 	/**
 <<<<<<< HEAD
 	 * *
@@ -21,24 +21,24 @@ public class ParkingMeter {
 	 * Example: <br><code>0.50,1.00 and 2.00 €</code>
 	 */
 	private static int[] coinsParkingMeter = {5,5,5};
- 
+
 	/**
 	 * contains the payed date of each of the defined meters. 
 	 */
 	private static Date[] meterDate = {new Date(),new Date(),new Date(),new Date()};
-		
+
 	// Secret Key 
 	private final static int[] secretKeys =        {1234,4321,9876,8888,9999,4545};
-	
+
 	// Secret Key Text
 	private final static String[] secretCommands = {"Transaction Log anzeigen", 
-													"Gebühren aller ParkplÃ¤tze anzeigen", 
-													"Alle Informationen abfragen", 
-													"Parkuhr testen", 
-													"Exit - Programm verlassen",
-													"Neuer Münzbestand eingeben"
-													};
-	
+			"Gebühren aller ParkplÃ¤tze anzeigen", 
+			"Alle Informationen abfragen", 
+			"Parkuhr testen", 
+			"Exit - Programm verlassen",
+			"Neuer Münzbestand eingeben"
+	};
+
 
 	/**
 	 * defines the payment rules. One single rules consists of 3 numbers: min money value, max money value
@@ -48,20 +48,20 @@ public class ParkingMeter {
 	 * TIME_INDEX = 2;	    Array Index 2 for parkingTimeDef, time in minutes</code><br>
 	 */
 	private final static double[][] parkingTimeDef={{0.00, 0.00,  0},	// from 0.00€ to 0.00€ -> time  0 minutes
-											{0.00, 0.50, 30},   // from 0.00€ to 0.50€ -> time 30 minutes
-											{0.50, 1.00, 45},   // from 0.50€ to 1.00€ -> time 45 minutes
-											{1.00, 1.50, 55},   // from 1.00€ to 1.50€ -> time 55 minutes
-											{1.50, 2.00, 60}};  // from 1.50€ to 2.00€ -> time 60 minutes
-	
+			{0.00, 0.50, 30},   // from 0.00€ to 0.50€ -> time 30 minutes
+			{0.50, 1.00, 45},   // from 0.50€ to 1.00€ -> time 45 minutes
+			{1.00, 1.50, 55},   // from 1.00€ to 1.50€ -> time 55 minutes
+			{1.50, 2.00, 60}};  // from 1.50€ to 2.00€ -> time 60 minutes
+
 	private final static int MIN_VALUE_INDEX = 0;	// Array Index 0 for parkingTimeDef
 	private final static int MAX_VALUE_INDEX = 1;	// Array Index 1 for parkingTimeDef
 	private final static int TIME_INDEX = 2;		// Array Index 2 for parkingTimeDef
-	
+
 	/**
 	 * currencyString contains the symbol for the used currency like € or $
 	 */
 	private final static String currencyString = "€";
-	
+
 	/**
 	 * transactionLog contains the string about all transaction of the parking meter
 	 */
@@ -70,12 +70,12 @@ public class ParkingMeter {
 	//Zentrale Meldungsverwaltung -- Aufgabe 2
 	static String getMessageText (MsgCode msgCode){
 		switch (msgCode) {
-	    case STARTPM	: return "Start von ParkingMeter";
-	    case EXITPM 	: return "Exit ParkingMeter -> Bye";
-	    case ENTERNR	: return "Parkplatz Nummer eingeben:";
-	    case WRONGCOIN	: return "Die Eingabe war nicht korrekt - gültige Münzen sind " ;
-	    case WRONGNR	: return "Die Eingabe war nicht korrekt - bitte nur Zahlen eingeben"; 
-	    default: return "Unbekannter Fehlercode";
+		case STARTPM	: return "Start von ParkingMeter";
+		case EXITPM 	: return "Exit ParkingMeter -> Bye";
+		case ENTERNR	: return "Parkplatz Nummer eingeben:";
+		case WRONGCOIN	: return "Die Eingabe war nicht korrekt - gültige Münzen sind " ;
+		case WRONGNR	: return "Die Eingabe war nicht korrekt - bitte nur Zahlen eingeben"; 
+		default: return "Unbekannter Fehlercode";
 		}
 	}
 
@@ -85,18 +85,18 @@ public class ParkingMeter {
 	 * @param args not used
 	 */
 	public static void main (String[] args) {
-		
+
 		System.out.println( getMessageText(MsgCode.STARTPM) );
 		System.out.println("======================");
 		System.out.println(formatSecretKeysInfo());
 		addToTransactionLog (getMessageText(MsgCode.STARTPM));
 		addToTransactionLog (formatCoinContent(coinsParkingMeter));
-		
+
 		actionController();
 
 		System.out.println(getMessageText(MsgCode.EXITPM));
 	}  
-	
+
 	/**
 	 * The action controller is taking care about the entry of the parking spot number.
 	 * Furthermore there the actionController checks if a secret code was entered. 
@@ -126,7 +126,7 @@ public class ParkingMeter {
 			}
 		}
 	}
-	
+
 	/**
 	 * Taking Care about the [UserStory 1 & 2] "Payment of Parking". 
 	 * The user is asked to enter the parking coins. The user input
@@ -141,8 +141,14 @@ public class ParkingMeter {
 			double[] insertedCoins = convertStringArrayToDouble(coinsString);
 			addToTransactionLog(formatInsertedCoins (insertedCoins)); 
 			if (verifyValidCoins(insertedCoins)) {
-				parkingMeterPayment(parkingSpotNumber, insertedCoins);
-				// TODO Erweiterung mit [UserStory 3] Beleg ausdrucken
+				double money = parkingMeterPayment(parkingSpotNumber, insertedCoins); 		//führt Methode aus, und gibt den Geldbetrag für den Beleg zurück
+				// TODO Erweiterung mit [UserStory 3] Beleg ausdrucken --Aufgabe 3
+				System.out.println("Beleg drucken [j/n]");
+				String antwort = TastaturRead.readString().trim();
+
+				if (antwort.equals("j")){
+					printCustomerReceipt(money, meterDate[parkingSpotNumber-1]);
+				}
 			}
 			else {
 				System.out.println( getMessageText(MsgCode.WRONGCOIN) + formatCoinBoxValueString() );
@@ -152,32 +158,41 @@ public class ParkingMeter {
 			System.out.println(getMessageText(MsgCode.WRONGNR));
 		}
 	}
-	
+
+	public static void printCustomerReceipt(double coin, Date enddate){					//Aufgabe3
+		double mwst = coin*0.19;
+		int minutes = (int)Math.round(computeTimeInMinutes (parkingTimeDef, coin));
+		SimpleDateFormat dt = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+
+		System.out.println("Beleg Parkhaus DHBW\n");
+		System.out.println( dt.format(new Date() ) +"\n");
+		System.out.println("Bezahlte Gebühr "+ currencyString +" " + coin);
+		System.out.println("(inkl 19% MWSt = "+ currencyString + " " + mwst+ ")\n");
+		System.out.println("MWSt-No 123.35.345\n");
+		System.out.println(minutes+" Minuten bis");
+		System.out.println(dt.format(enddate)+"\n");
+		System.out.println("Herzlichen Dank");
+
+	}
+
 
 	// TODO [UserStory 8] Neuer Münzbetrag eingeben -- Aufgabe 1
-	/**
-	 * 
-	 */
 	private static void insertNewCoinsValueController() {
 		int anzahl;
-		
+
 		System.out.println("Neuer Münzbestand eingeben");
 		for (int i=0; i<coinsBoxValue.length; i++){
-		System.out.println("Geben Sie den neuen Bestand der "+coinsBoxValue[i]+" "+currencyString +" Münzen an:");
-		anzahl  = (int)TastaturRead.readLong();
-		coinsParkingMeter [i] = anzahl;
-	}
-	}
-     
-   /* private static String Integer.parseInt(String trim) {
-		// TODO Auto-generated method stub
-		return null;
+			System.out.println("Geben Sie den neuen Bestand der "+coinsBoxValue[i]+" "+currencyString +" Münzen an:");
+			anzahl  = (int)TastaturRead.readLong();
+			coinsParkingMeter [i] = anzahl;
+		}
 	}
 
+
 	/**
-     * Prints the content of all internal variables and definitions
-     */
-    private static void printAllInfo (){
+	 * Prints the content of all internal variables and definitions
+	 */
+	private static void printAllInfo (){
 		System.out.println (formatCoinContent(coinsParkingMeter));
 		System.out.println (formatParkingTimeDefinion(parkingTimeDef));
 		System.out.println (formatMeterInfo(meterDate));
@@ -192,21 +207,21 @@ public class ParkingMeter {
 		System.out.println ("Max Park Value: " + formatMoney(getMaxParkingValue(parkingTimeDef), currencyString));
 		System.out.println ("");
 		printTransactionLog();
-    }
-    
-    /**
-     * Prints the content of the parking meters. The output consists of a title 
-     * and of the parkingMeter number, the payed date and time & the time difference.<br>
+	}
+
+	/**
+	 * Prints the content of the parking meters. The output consists of a title 
+	 * and of the parkingMeter number, the payed date and time & the time difference.<br>
 	 * Example (with two parking meters): <code><br>
 	 * Parking Meter Info vom: 2013-11-04 18:15<br>
 	 * Parkuhr[1]  |  bezahlt bis 2013-11-04 18:15  |  Differenz 00:00:05<br>
-     * Parkuhr[2]  |  bezahlt bis 2013-11-04 18:15  |  Differenz 00:00:05<br>
-     * </code>
-     */
-    private static void printMeterInfo () {
+	 * Parkuhr[2]  |  bezahlt bis 2013-11-04 18:15  |  Differenz 00:00:05<br>
+	 * </code>
+	 */
+	private static void printMeterInfo () {
 		System.out.println (formatMeterInfo(meterDate));
-     }
-	
+	}
+
 	/**
 	 * Adds a string to the transaction log. Each string will be placed as 
 	 * an individual line (with \n) together with a transaction date.
@@ -229,21 +244,21 @@ public class ParkingMeter {
 		System.out.println ("Transaction Log von " + formatDate (now));
 		System.out.println (transactionLog);
 	}
-	
+
 	// TODO AUFGABE4 Fehler beheben: Buchung der Parkgebühr auf die Münzeinheiten
 	private static void bookParkingCoins (int[] parkCoins) {
-		
+
 	}
-	
+
 	/**
 	 * Verifies if the inserted coins are found in the coinsBoxValue array.
 	 * @param insertedCoins contains the coins inserted by the customer
 	 * @return true if all coins are found.
 	 */
 	private static boolean verifyValidCoins(double[] insertedCoins) {
-		
+
 		boolean valid=false;
-		
+
 		for (int i=0; i < insertedCoins.length ; i++) {
 			valid=false;
 			// Loop through all coinBoxes and check if the value exists
@@ -257,7 +272,7 @@ public class ParkingMeter {
 		}
 		return valid;
 	}
-	
+
 
 	/**
 	 * Handles the customer payment. Assigns the inserted coins to coin boxes, 
@@ -267,8 +282,8 @@ public class ParkingMeter {
 	 * @param parkingSpotNumber the parking spot number
 	 * @param insertedCoins the coins inserted by the customer
 	 */
-	private static void parkingMeterPayment (int parkingSpotNumber, double insertedCoins[]) {
-		
+	private static double parkingMeterPayment (int parkingSpotNumber, double insertedCoins[]) {
+
 		// sort inserted coins into the value order of the coin boxes
 		int[] coins = assignCoins(insertedCoins); 
 
@@ -296,8 +311,10 @@ public class ParkingMeter {
 		out = "Parkzeit bis " + formatDate(meterDate[parkingSpotNumber-1]) + " - " + minutes + " Minuten";
 		System.out.println (out);
 		addToTransactionLog(out);
+
+		return parkValue;
 	}
-		
+
 	/**
 	 * Computes the max money which can be used for the max parking time, defined by the parking rules.
 	 * @param coins array with number of payed coins related to coinsBoxValue
@@ -307,7 +324,7 @@ public class ParkingMeter {
 		int[] parkingCoins =  new int[coinsBoxValue.length];
 		int noCoinBoxes = coinsBoxValue.length;
 		for (int coinBox = noCoinBoxes-1; coinBox >= 0; coinBox--) {
-			
+
 			while (coins[coinBox] > 0) {
 				parkingCoins[coinBox]++;
 				coins[coinBox]--;
@@ -320,7 +337,7 @@ public class ParkingMeter {
 		}
 		return  parkingCoins;
 	}
-	
+
 	/**
 	 * Assigns the coins from an array of inserted coins to an array of coin boxes.<br>
 	 * Example: inserted coins array 1.0, 0.5, 2.0<br>
@@ -337,13 +354,13 @@ public class ParkingMeter {
 		for (int i=0; i < insertedCoins.length ; i++) {
 			for (int coinBox = 0; coinBox < noCoinBoxes; coinBox++) {
 				if (Math.round(insertedCoins[i]*10) == Math.round (coinsBoxValue[coinBox]*10)) {
-			        coins[coinBox] ++;
+					coins[coinBox] ++;
 				}
 			}
 		}
 		return coins;
 	}
-	
+
 	/**
 	 * The algorithm computes the value of the money depending 
 	 * on the number of coins in the boxes. The value of each coin depends on the 
@@ -359,7 +376,7 @@ public class ParkingMeter {
 		}
 		return value;
 	}
-	
+
 	/**
 	 * Computes the parking time in minutes based on a money value defined by the payment rules.
 	 * @param parkingTimedef Definition of the payment rules.
@@ -376,7 +393,7 @@ public class ParkingMeter {
 		}
 		return minutes;
 	}
-	
+
 	/**
 	 * Get the max parking time defined by the payment rules.
 	 * @param parkingTimedef the definition of the payment rules.
@@ -394,7 +411,7 @@ public class ParkingMeter {
 	private static double getMaxParkingValue(double parkingTimedef[][]) {
 		return parkingTimedef[parkingTimedef.length-1][MAX_VALUE_INDEX];
 	}
-	
+
 	/**
 	 * Formats a string of the content of the coin boxes of the parking meter. The value of 
 	 * each coin box is defined by the coinsBoxValue array. In the first line appears
@@ -416,13 +433,13 @@ public class ParkingMeter {
 		for (int coinBox = 0; coinBox < noCoinBoxes; coinBox++) {
 			value = coins[coinBox] * coinsBoxValue[coinBox];
 			out += "Münzeinheit" + "[" + (coinBox + 1) + "]" + "  |  " +
-			       "Münze: "  + formatMoney(coinsBoxValue[coinBox], currencyString) + "  |  " +
-				   "Anzahl: " + (coins[coinBox]) + "  |  " +
-			       "Wert: "   + formatMoney(value, currencyString) +  "  |" + "\n";
+					"Münze: "  + formatMoney(coinsBoxValue[coinBox], currencyString) + "  |  " +
+					"Anzahl: " + (coins[coinBox]) + "  |  " +
+					"Wert: "   + formatMoney(value, currencyString) +  "  |" + "\n";
 		}
 		return out;
 	}
-	
+
 	/**
 	 * Creates a table of the parking time payment rules, with rule number, 
 	 * money range (from-to) and related parking time.
@@ -430,8 +447,8 @@ public class ParkingMeter {
 	 * <code>
 	 * Parkzeit Definition (with 2 definition lines):<br>
 	 * Zeitbereich[1]  |  von   0.00 €  |  bis   0.00 €  |  Zeit: 00 min  |<br>
-     * Zeitbereich[2]  |  von   0.00 €  |  bis   0.50 €  |  Zeit: 30 min  |<br>
-     * </code>
+	 * Zeitbereich[2]  |  von   0.00 €  |  bis   0.50 €  |  Zeit: 30 min  |<br>
+	 * </code>
 	 * @param parkingTimedef Definition of the payment rules.
 	 * @return Formated Definition of the payment rules; one line per rule.
 	 */
@@ -445,7 +462,7 @@ public class ParkingMeter {
 		}		
 		return out;
 	}
-	
+
 	/**
 	 * Formats the date and time information of all parking meters in the array meterdate. 
 	 * The output consists of a title and of: 
@@ -458,7 +475,7 @@ public class ParkingMeter {
 	 * Parkuhr[2]  |  bezahlt bis 2013-11-05 14:15  |  Differenz 00:29:56<br>
 	 * Parkuhr[3]  |  bezahlt bis 2013-11-05 13:43  |  Differenz 00:01:45 ** Parkzeit abgelaufen **<br>
 	 * Parkuhr[4]  |  bezahlt bis 2013-11-05 13:43  |  Differenz 00:01:45 ** Parkzeit abgelaufen **<br>
-     * </code>
+	 * </code>
 	 * @param meterdate the date array of the parking meters.
 	 * @return the formated string.
 	 */
@@ -469,12 +486,12 @@ public class ParkingMeter {
 			String overtime="";
 			if (compareTwoDates(now,meterdate[meter])) overtime=" ** Parkzeit abgelaufen **";
 			out += "Parkuhr" + "[" + (meter + 1) + "]" + "  |  " +
-                   "bezahlt bis " + formatDate(meterdate[meter]) +  "  |  " +
-			       "Differenz " + formatTime (computeTimeDifference(now, meterdate[meter])) + overtime + "\n";
+					"bezahlt bis " + formatDate(meterdate[meter]) +  "  |  " +
+					"Differenz " + formatTime (computeTimeDifference(now, meterdate[meter])) + overtime + "\n";
 		}
 		return out;
 	}
-	
+
 	/**
 	 * Creates a list of secret numbers with the dependent meaning.
 	 * Example: 
@@ -489,14 +506,14 @@ public class ParkingMeter {
 	 * @return the formated string.
 	 */
 	private static String formatSecretKeysInfo () {
-		
+
 		String out="Spezielle Befehle\n";
 		for (int i = 0 ; i < secretKeys.length ; i++) {
 			out += secretKeys[i] + "=" + secretCommands[i] + "\n";
 		}
 		return out;
 	}
-	
+
 	/**
 	 * Formats the values of the inserted coins array to a readable string including currency.<br>
 	 * Example <code>0.5, 1, 2, 0.5</code> formats to <code>"0.50 €, 1.00 €, 2.00 €, 0.5 €"</code>
@@ -508,9 +525,9 @@ public class ParkingMeter {
 		for (int i=0; i < insertedCoins.length ; i++) {
 			out += formatMoney (insertedCoins[i], currencyString) + ", ";
 		}
-	    return out.substring(MIN_VALUE_INDEX, out.length()-2);
+		return out.substring(MIN_VALUE_INDEX, out.length()-2);
 	}
-	
+
 	/**
 	 * Formats the definition of the coinBoxValue array to the format:<br> 
 	 * <code>"0.50 €, 1.00 €, 2.00 €"</code>
@@ -518,13 +535,13 @@ public class ParkingMeter {
 	 */
 	private  static String formatCoinBoxValueString () {
 		String out = "";
-	
+
 		for (int coinBox = 0 ; coinBox < coinsBoxValue.length ; coinBox++) {
 			out += formatMoney(coinsBoxValue[coinBox], currencyString) + ", ";
 		}
-        return out.substring(MIN_VALUE_INDEX, out.length()-2);
+		return out.substring(MIN_VALUE_INDEX, out.length()-2);
 	}
-	
+
 	/**
 	 * Formats the number of coins (a, b, c) in the coins array with the value defined in the 
 	 * coinBoxValue array to the format <code>"a x 0.50 €, b x 1.00 €, c x 2.00 €"</code>
@@ -536,9 +553,9 @@ public class ParkingMeter {
 		for (int coinBox = 0 ; coinBox < coinsBoxValue.length ; coinBox++) {
 			out+= coins[coinBox] + " x " + formatMoney(coinsBoxValue[coinBox], currencyString).trim() + ", ";
 		}
-	     return out.substring(MIN_VALUE_INDEX, out.length()-2);
+		return out.substring(MIN_VALUE_INDEX, out.length()-2);
 	}
-	
+
 	/**
 	 * Checks if a string array contains only numbers 
 	 * @param arr contains the string array to be checked
@@ -551,7 +568,7 @@ public class ParkingMeter {
 		}
 		return numeric;
 	}
-	
+
 	/**
 	 * Checks if a string contains a number or letters.
 	 * @param str contains the string to be checked.
@@ -561,7 +578,7 @@ public class ParkingMeter {
 	{
 		return str.trim().matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
 	}
-	
+
 	/**
 	 * Formatting a date and time to <code>"yyyy-MM-dd HH:mm"</code>.<br>
 	 * Example: <code>2013-10-11 12:30</code>
@@ -572,7 +589,7 @@ public class ParkingMeter {
 		SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		return dt.format(date);
 	}
-	
+
 	/**
 	 * Formats a given time in millisecond to hh:mm:ss. <br>
 	 * Example <code>"00:23:55"</code>
@@ -583,7 +600,7 @@ public class ParkingMeter {
 		DecimalFormat df = new DecimalFormat("00");
 		return  df.format(milliseconds/(60*60*1000)) + ":" + df.format(milliseconds/(60 * 1000) % 60) + ":" + df.format(milliseconds/1000 % 60);
 	}
-	
+
 	/**
 	 * Formats minutes always to 2 numbers and adds the string "min". <br>
 	 * Example: <code>"02 min"</code>
@@ -594,7 +611,7 @@ public class ParkingMeter {
 		DecimalFormat df = new DecimalFormat("#00");
 		return df.format(minutes) + " min";
 	}
-	
+
 	/**
 	 * Formats the money output depending on the default local region settings. 
 	 * The value is 6 characters long, an currency string is added at the end.
@@ -606,8 +623,8 @@ public class ParkingMeter {
 	private static String formatMoney(double value, String currency){
 		return (String.format ("%,6.2f",value)) + currency;
 	}
-	
-	
+
+
 	/**
 	 * Converts an array of string values to to double numbers. 
 	 * Strings with letters are not converted, no error is thrown!
@@ -640,7 +657,7 @@ public class ParkingMeter {
 		long diff= Math.abs(cal1.getTimeInMillis() -  cal2.getTimeInMillis());
 		return diff;
 	}
-	
+
 	/**
 	 * Compares date1 with date2. Returns true if date1 is older than date2. <br>
 	 * Example date1=2013-10-23 12:10 date2=2013-10-23 11:10 => returns true
@@ -656,7 +673,7 @@ public class ParkingMeter {
 
 		return ((cal1.getTimeInMillis() - cal2.getTimeInMillis()) > 0 );	
 	}
-	
+
 	/**
 	 * Adds minutes to a given date.
 	 * @param date the given date.
@@ -686,27 +703,27 @@ public class ParkingMeter {
 		testComputeParkingCoins();
 		testAddTime();
 	}	
-	
+
 	private static void testComputeCoinsValue () {
 		System.out.println ("Anfangsbestand: " + formatMoney(computeCoinsValue(coinsParkingMeter), currencyString)+ "\n") ;
 	}
-	
+
 	private static void testFormatCoinContent () {
 		System.out.println (formatCoinContent(coinsParkingMeter));
-    }
-		
+	}
+
 	private static void testFormatCoins() {
 		System.out.println (formatCoins(coinsParkingMeter));
-    }
+	}
 	private static void testFormatParkingTimeDefinition () {
 		System.out.println (formatParkingTimeDefinion(parkingTimeDef));
 	}
-	
+
 	private static void testFormatMeterInfo () {
 		System.out.println (formatMeterInfo(meterDate));
 	}
-	
-    private static void testComputeTimeInMinutes () {
+
+	private static void testComputeTimeInMinutes () {
 		System.out.println ("Test von computeTimeInMinutes()");
 		System.out.println (formatMoney(0.00, currencyString) + " -> " + formatMinute(computeTimeInMinutes(parkingTimeDef,0.0)));
 		System.out.println (formatMoney(0.50, currencyString) + " -> " + formatMinute(computeTimeInMinutes(parkingTimeDef,0.50)));
@@ -714,40 +731,40 @@ public class ParkingMeter {
 		System.out.println (formatMoney(1.50, currencyString) + " -> " + formatMinute(computeTimeInMinutes(parkingTimeDef,1.50)));
 		System.out.println (formatMoney(2.00, currencyString) + " -> " + formatMinute(computeTimeInMinutes(parkingTimeDef,2.00)));
 		System.out.println ("");
-    }	
+	}	
 
-    private static void testGetMaxParkingTimeAndValue () {
+	private static void testGetMaxParkingTimeAndValue () {
 		System.out.println ("Max Park Time: " + formatMinute(getMaxParkingTime(parkingTimeDef)));
 		System.out.println ("Max Park Value: " + formatMoney (getMaxParkingValue(parkingTimeDef), currencyString));
 		System.out.println ("");
-    }
+	}
 
-    private static void testComputeParkingCoins () {
-       	System.out.println ("testComputeParkingCoins\n");
-           	// Test 1
-    	int[] coins1 = {2,1,0};
+	private static void testComputeParkingCoins () {
+		System.out.println ("testComputeParkingCoins\n");
+		// Test 1
+		int[] coins1 = {2,1,0};
 		System.out.println ("Insert:   " + formatCoins(coins1));
-   	    int [] parkingCoins1 = computeMaxCoinsForParking(coins1);
+		int [] parkingCoins1 = computeMaxCoinsForParking(coins1);
 		System.out.println ("Parking:  " + formatCoins(parkingCoins1));
 		System.out.println ("Left Over:" + formatCoins(coins1));
-		
+
 		// Test 2
-    	int[] coins2 = {3,1,0};
+		int[] coins2 = {3,1,0};
 		System.out.println ("Insert:   " + formatCoins(coins2));
-   	    int [] parkingCoins2 = computeMaxCoinsForParking(coins2);
+		int [] parkingCoins2 = computeMaxCoinsForParking(coins2);
 		System.out.println ("Parking:  " + formatCoins(parkingCoins2));
 		System.out.println ("Left Over:" + formatCoins(coins2));
-		
+
 		// Test 3
-    	int[] coins3 = {3,1,2};
+		int[] coins3 = {3,1,2};
 		System.out.println ("Insert:   " + formatCoins(coins3));
-   	    int [] parkingCoins3 = computeMaxCoinsForParking(coins3);
+		int [] parkingCoins3 = computeMaxCoinsForParking(coins3);
 		System.out.println ("Parking:  " + formatCoins(parkingCoins3));
 		System.out.println ("Left Over:" + formatCoins(coins3));
-    }
-    
-    private static void testAddTime() {
-    	Date date = addTime (new Date(),60);
-    	System.out.println ("Datum+Zeit: jetzt + 60 Minuten = " + formatDate (date));
-    }
+	}
+
+	private static void testAddTime() {
+		Date date = addTime (new Date(),60);
+		System.out.println ("Datum+Zeit: jetzt + 60 Minuten = " + formatDate (date));
+	}
 }
