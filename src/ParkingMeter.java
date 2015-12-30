@@ -20,7 +20,7 @@ public class ParkingMeter {
 	 * defined by the coinsBoxValue.<br>
 	 * Example: <br><code>0.50,1.00 and 2.00 €</code>
 	 */
-	private static int[] coinsParkingMeter = {5,5,5};
+	static int[] coinsParkingMeter = {5,5,5};
 
 	/**
 	 * contains the payed date of each of the defined meters. 
@@ -147,7 +147,8 @@ public class ParkingMeter {
 				String antwort = TastaturRead.readString().trim();
 
 				if (antwort.equals("j")){
-					printCustomerReceipt(money, meterDate[parkingSpotNumber-1]);
+					String beleg = printCustomerReceipt(money, meterDate[parkingSpotNumber-1]);
+					System.out.println(beleg);
 				}
 			}
 			else {
@@ -159,20 +160,22 @@ public class ParkingMeter {
 		}
 	}
 
-	public static void printCustomerReceipt(double coin, Date enddate){					//Aufgabe3
+	public static String printCustomerReceipt(double coin, Date enddate){					//Aufgabe3
 		double mwst = coin*0.19;
 		int minutes = (int)Math.round(computeTimeInMinutes (parkingTimeDef, coin));
 		SimpleDateFormat dt = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
-		System.out.println("Beleg Parkhaus DHBW\n");
-		System.out.println( dt.format(new Date() ) +"\n");
-		System.out.println("Bezahlte Gebühr "+ currencyString +" " + coin);
-		System.out.println("(inkl 19% MWSt = "+ currencyString + " " + mwst+ ")\n");
-		System.out.println("MWSt-No 123.35.345\n");
-		System.out.println(minutes+" Minuten bis");
-		System.out.println(dt.format(enddate)+"\n");
-		System.out.println("Herzlichen Dank");
-
+		String beleg;
+		beleg = "Beleg Parkhaus DHBW\n\n"
+			  + dt.format(new Date() ) +"\n\n"
+			  + "Bezahlte Gebühr "+ currencyString +" " + coin +"\n"
+			  + "(inkl 19% MWSt = "+ currencyString + " " + mwst+ ")\n\n"
+			  + "MWSt-No 123.35.345\n\n"
+			  + minutes+" Minuten bis\n"
+			  + dt.format(enddate)+"\n\n"
+			  + "Herzlichen Dank";
+		
+		return beleg;
 	}
 
 
@@ -246,7 +249,7 @@ public class ParkingMeter {
 	}
 
 	// TODO AUFGABE4 Fehler beheben: Buchung der Parkgebühr auf die Münzeinheiten
-	private static void bookParkingCoins (int[] parkCoins) {
+	static void bookParkingCoins (int[] parkCoins) {
 		for (int i=0; i<coinsParkingMeter.length; i++){
 			coinsParkingMeter[i] += parkCoins[i];
 		}
