@@ -11,14 +11,14 @@ public class ParkingMeter {
 =======
 >>>>>>> parent of f944620... MasterChange
 	 * defines values of coins in the boxes. <br>Example:<br>
-	 * <code> 0.50, 1.00 and 2.00 â‚¬</code>
+	 * <code> 0.50, 1.00 and 2.00 €</code>
 	 */
 	private static double[] coinsBoxValue = {0.50,1.00,2.00};
 
 	/**
 	 * coin boxes contain in the beginning for example 5 coins of each value 
 	 * defined by the coinsBoxValue.<br>
-	 * Example: <br><code>0.50,1.00 and 2.00 â‚¬</code>
+	 * Example: <br><code>0.50,1.00 and 2.00 €</code>
 	 */
 	private static int[] coinsParkingMeter = {5,5,5};
  
@@ -32,12 +32,13 @@ public class ParkingMeter {
 	
 	// Secret Key Text
 	private final static String[] secretCommands = {"Transaction Log anzeigen", 
-													"GebÃ¼hren aller ParkplÃ¤tze anzeigen", 
+													"Gebühren aller ParkplÃ¤tze anzeigen", 
 													"Alle Informationen abfragen", 
 													"Parkuhr testen", 
 													"Exit - Programm verlassen",
-													"Neuer MÃ¼nzbestand eingeben"
+													"Neuer Münzbestand eingeben"
 													};
+	
 
 	/**
 	 * defines the payment rules. One single rules consists of 3 numbers: min money value, max money value
@@ -46,25 +47,37 @@ public class ParkingMeter {
 	 * MAX_VALUE_INDEX = 1;	Array Index 1 for parkingTimeDef, max money<br>
 	 * TIME_INDEX = 2;	    Array Index 2 for parkingTimeDef, time in minutes</code><br>
 	 */
-	private final static double[][] parkingTimeDef={{0.00, 0.00,  0},	// from 0.00â‚¬ to 0.00â‚¬ -> time  0 minutes
-											{0.00, 0.50, 30},   // from 0.00â‚¬ to 0.50â‚¬ -> time 30 minutes
-											{0.50, 1.00, 45},   // from 0.50â‚¬ to 1.00â‚¬ -> time 45 minutes
-											{1.00, 1.50, 55},   // from 1.00â‚¬ to 1.50â‚¬ -> time 55 minutes
-											{1.50, 2.00, 60}};  // from 1.50â‚¬ to 2.00â‚¬ -> time 60 minutes
+	private final static double[][] parkingTimeDef={{0.00, 0.00,  0},	// from 0.00€ to 0.00€ -> time  0 minutes
+											{0.00, 0.50, 30},   // from 0.00€ to 0.50€ -> time 30 minutes
+											{0.50, 1.00, 45},   // from 0.50€ to 1.00€ -> time 45 minutes
+											{1.00, 1.50, 55},   // from 1.00€ to 1.50€ -> time 55 minutes
+											{1.50, 2.00, 60}};  // from 1.50€ to 2.00€ -> time 60 minutes
 	
 	private final static int MIN_VALUE_INDEX = 0;	// Array Index 0 for parkingTimeDef
 	private final static int MAX_VALUE_INDEX = 1;	// Array Index 1 for parkingTimeDef
 	private final static int TIME_INDEX = 2;		// Array Index 2 for parkingTimeDef
 	
 	/**
-	 * currencyString contains the symbol for the used currency like â‚¬ or $
+	 * currencyString contains the symbol for the used currency like € or $
 	 */
-	private final static String currencyString = " â‚¬";
+	private final static String currencyString = "€";
 	
 	/**
 	 * transactionLog contains the string about all transaction of the parking meter
 	 */
 	private static String transactionLog="";
+
+	//Zentrale Meldungsverwaltung -- Aufgabe 2
+	static String getMessageText (MsgCode msgCode){
+		switch (msgCode) {
+	    case STARTPM	: return "Start von ParkingMeter";
+	    case EXITPM 	: return "Exit ParkingMeter -> Bye";
+	    case ENTERNR	: return "Parkplatz Nummer eingeben:";
+	    case WRONGCOIN	: return "Die Eingabe war nicht korrekt - gültige Münzen sind " ;
+	    case WRONGNR	: return "Die Eingabe war nicht korrekt - bitte nur Zahlen eingeben"; 
+	    default: return "Unbekannter Fehlercode";
+		}
+	}
 
 
 	/**
@@ -73,15 +86,15 @@ public class ParkingMeter {
 	 */
 	public static void main (String[] args) {
 		
-		System.out.println("Start von ParkingMeter");
+		System.out.println( getMessageText(MsgCode.STARTPM) );
 		System.out.println("======================");
 		System.out.println(formatSecretKeysInfo());
-		addToTransactionLog ("Start von ParkingMeter");
+		addToTransactionLog (getMessageText(MsgCode.STARTPM));
 		addToTransactionLog (formatCoinContent(coinsParkingMeter));
 		
 		actionController();
 
-		System.out.println("Exit ParkingMeter -> Bye");
+		System.out.println(getMessageText(MsgCode.EXITPM));
 	}  
 	
 	/**
@@ -94,7 +107,7 @@ public class ParkingMeter {
 		boolean exit = false;
 		while (!exit) {
 			System.out.println ("--------------------------");
-			System.out.println ("Parkplatz Nummer eingeben:");
+			System.out.println(getMessageText(MsgCode.ENTERNR)); 
 
 			int parkingSpotNumber  = (int)TastaturRead.readLong();
 			if (parkingSpotNumber == secretKeys[0])      printTransactionLog();
@@ -121,7 +134,7 @@ public class ParkingMeter {
 	 * @param parkingSpotNumber Parking Spot Number
 	 */
 	private static void insertCoinsController (int parkingSpotNumber){
-		System.out.println ("MÃ¼nzen einwerfen fÃ¼r Parkplatz [" + parkingSpotNumber + "]:");
+		System.out.println ("Münzen einwerfen für Parkplatz [" + parkingSpotNumber + "]:");
 		String inputCoins  = TastaturRead.readString().trim();
 		String[] coinsString = inputCoins.split(";|\\s+");
 		if (checkAllIsNumeric (coinsString)) {
@@ -132,26 +145,36 @@ public class ParkingMeter {
 				// TODO Erweiterung mit [UserStory 3] Beleg ausdrucken
 			}
 			else {
-				System.out.println ("Die Eingabe war nicht korrekt - gÃ¼ltige MÃ¼nzen sind " + formatCoinBoxValueString());
+				System.out.println( getMessageText(MsgCode.WRONGCOIN) + formatCoinBoxValueString() );
 			}
 		}
 		else {
-			System.out.println ("Die Eingabe war nicht korrekt - bitte nur Zahlen eingeben");
+			System.out.println(getMessageText(MsgCode.WRONGNR));
 		}
 	}
+	
 
-	// TODO [UserStory 8] Neuer MÃ¼nzbetrag eingeben
+	// TODO [UserStory 8] Neuer Münzbetrag eingeben -- Aufgabe 1
 	/**
 	 * 
 	 */
 	private static void insertNewCoinsValueController() {
-		// coinsBoxValue
-		// coinsParkingMeter
-		// Ausgabe neuer Inhalt formatCoinContent(coinsParkingMeter);
-		System.out.println("Neuer MÃ¼nzbestand eingeben");
+		int anzahl;
+		
+		System.out.println("Neuer Münzbestand eingeben");
+		for (int i=0; i<coinsBoxValue.length; i++){
+		System.out.println("Geben Sie den neuen Bestand der "+coinsBoxValue[i]+" "+currencyString +" Münzen an:");
+		anzahl  = (int)TastaturRead.readLong();
+		coinsParkingMeter [i] = anzahl;
+	}
 	}
      
-    /**
+   /* private static String Integer.parseInt(String trim) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
      * Prints the content of all internal variables and definitions
      */
     private static void printAllInfo (){
@@ -199,7 +222,7 @@ public class ParkingMeter {
 	 * Example: <br><code>
 	 * Transaction Log von 2013-11-05 12:55<br>
 	 * [2013-11-05 12:54] Start von ParkingMeter<br>
-	 * [2013-11-05 12:54] Inhalt der MÃ¼nzeinheiten TOTAL:  17.50 â‚¬ </code><br>
+	 * [2013-11-05 12:54] Inhalt der Münzeinheiten TOTAL:  17.50 € </code><br>
 	 */
 	private static void printTransactionLog() {
 		Date now = new Date();
@@ -207,7 +230,7 @@ public class ParkingMeter {
 		System.out.println (transactionLog);
 	}
 	
-	// TODO Fehler beheben: Buchung der ParkgebÃ¼hr auf die MÃ¼nzeinheiten
+	// TODO AUFGABE4 Fehler beheben: Buchung der Parkgebühr auf die Münzeinheiten
 	private static void bookParkingCoins (int[] parkCoins) {
 		
 	}
@@ -254,14 +277,14 @@ public class ParkingMeter {
 
 		// Produce output to customer and transactionLog
 		double parkValue = computeCoinsValue(parkCoins);
-		String out = "Zahlung fÃ¼r Parkplatznummer [" + parkingSpotNumber + "]: " + formatMoney(parkValue, currencyString).trim() + " = " + formatCoins(parkCoins);
+		String out = "Zahlung für Parkplatznummer [" + parkingSpotNumber + "]: " + formatMoney(parkValue, currencyString).trim() + " = " + formatCoins(parkCoins);
 		System.out.println (out);
 		addToTransactionLog(out);
 
 		// Check if we must pay back the left over to the customer
 		//if (computeCoinsValue(coins) > getMaxParkingValue( parkingTimeDef)) {
 		if (computeCoinsValue(coins) > 0) {
-			System.out.println ("-> RÃ¼ckgabe (zuviel bezahlt) :" + formatCoins(coins));
+			System.out.println ("-> Rückgabe (zuviel bezahlt) :" + formatCoins(coins));
 		}
 
 		// Compute Parking Time
@@ -302,9 +325,9 @@ public class ParkingMeter {
 	 * Assigns the coins from an array of inserted coins to an array of coin boxes.<br>
 	 * Example: inserted coins array 1.0, 0.5, 2.0<br>
 	 * Assignment:<br> <code>
-	 * 1.0 -> coinBox with value 1.00â‚¬,<br> 
-	 * 0.5 -> coinBox with value 0.50â‚¬,<br> 
-	 * 2.0 -> coinBox with value 2.00â‚¬, </code> 
+	 * 1.0 -> coinBox with value 1.00€,<br> 
+	 * 0.5 -> coinBox with value 0.50€,<br> 
+	 * 2.0 -> coinBox with value 2.00€, </code> 
 	 * @param insertedCoins
 	 * @return coins array related to coinsBoxValue array
 	 */
@@ -378,22 +401,22 @@ public class ParkingMeter {
 	 * a title with the total amount of coins.<br>
 	 * Example (with 3 coin boxes):<br>
 	 * <code>
-	 * Inhalt der MÃ¼nzeinheiten TOTAL:  17.50 â‚¬<br>
-	 * MÃ¼nzeinheit[1]  |  MÃ¼nze:   0.50 â‚¬  |  Anzahl: 5  |  Wert:   2.50 â‚¬  |<br>
-	 * MÃ¼nzeinheit[2]  |  MÃ¼nze:   1.00 â‚¬  |  Anzahl: 5  |  Wert:   5.00 â‚¬  |<br>
-	 * MÃ¼nzeinheit[3]  |  MÃ¼nze:   2.00 â‚¬  |  Anzahl: 5  |  Wert:  10.00 â‚¬  |<br>
+	 * Inhalt der Münzeinheiten TOTAL:  17.50 €<br>
+	 * Münzeinheit[1]  |  Münze:   0.50 €  |  Anzahl: 5  |  Wert:   2.50 €  |<br>
+	 * Münzeinheit[2]  |  Münze:   1.00 €  |  Anzahl: 5  |  Wert:   5.00 €  |<br>
+	 * Münzeinheit[3]  |  Münze:   2.00 €  |  Anzahl: 5  |  Wert:  10.00 €  |<br>
 	 * </code>
 	 * @param coins contains an array with the number of coins (values sorted by coinsBoxValue.
 	 * @return the formated string.
 	 */
 	private static String formatCoinContent(int coins[]){
-		String out="Inhalt der MÃ¼nzeinheiten TOTAL: " + formatMoney(computeCoinsValue(coins), currencyString) + "\n";
+		String out="Inhalt der Münzeinheiten TOTAL: " + formatMoney(computeCoinsValue(coins), currencyString) + "\n";
 		int noCoinBoxes = coinsBoxValue.length;
 		double value = 0;
 		for (int coinBox = 0; coinBox < noCoinBoxes; coinBox++) {
 			value = coins[coinBox] * coinsBoxValue[coinBox];
-			out += "MÃ¼nzeinheit" + "[" + (coinBox + 1) + "]" + "  |  " +
-			       "MÃ¼nze: "  + formatMoney(coinsBoxValue[coinBox], currencyString) + "  |  " +
+			out += "Münzeinheit" + "[" + (coinBox + 1) + "]" + "  |  " +
+			       "Münze: "  + formatMoney(coinsBoxValue[coinBox], currencyString) + "  |  " +
 				   "Anzahl: " + (coins[coinBox]) + "  |  " +
 			       "Wert: "   + formatMoney(value, currencyString) +  "  |" + "\n";
 		}
@@ -406,8 +429,8 @@ public class ParkingMeter {
 	 * Example: <br>
 	 * <code>
 	 * Parkzeit Definition (with 2 definition lines):<br>
-	 * Zeitbereich[1]  |  von   0.00 â‚¬  |  bis   0.00 â‚¬  |  Zeit: 00 min  |<br>
-     * Zeitbereich[2]  |  von   0.00 â‚¬  |  bis   0.50 â‚¬  |  Zeit: 30 min  |<br>
+	 * Zeitbereich[1]  |  von   0.00 €  |  bis   0.00 €  |  Zeit: 00 min  |<br>
+     * Zeitbereich[2]  |  von   0.00 €  |  bis   0.50 €  |  Zeit: 30 min  |<br>
      * </code>
 	 * @param parkingTimedef Definition of the payment rules.
 	 * @return Formated Definition of the payment rules; one line per rule.
@@ -476,7 +499,7 @@ public class ParkingMeter {
 	
 	/**
 	 * Formats the values of the inserted coins array to a readable string including currency.<br>
-	 * Example <code>0.5, 1, 2, 0.5</code> formats to <code>"0.50 â‚¬, 1.00 â‚¬, 2.00 â‚¬, 0.5 â‚¬"</code>
+	 * Example <code>0.5, 1, 2, 0.5</code> formats to <code>"0.50 €, 1.00 €, 2.00 €, 0.5 €"</code>
 	 * @param insertedCoins the array of coin values.
 	 * @return the formated string. 
 	 */
@@ -490,7 +513,7 @@ public class ParkingMeter {
 	
 	/**
 	 * Formats the definition of the coinBoxValue array to the format:<br> 
-	 * <code>"0.50 â‚¬, 1.00 â‚¬, 2.00 â‚¬"</code>
+	 * <code>"0.50 €, 1.00 €, 2.00 €"</code>
 	 * @return the string with the coin box values.
 	 */
 	private  static String formatCoinBoxValueString () {
@@ -504,7 +527,7 @@ public class ParkingMeter {
 	
 	/**
 	 * Formats the number of coins (a, b, c) in the coins array with the value defined in the 
-	 * coinBoxValue array to the format <code>"a x 0.50 â‚¬, b x 1.00 â‚¬, c x 2.00 â‚¬"</code>
+	 * coinBoxValue array to the format <code>"a x 0.50 €, b x 1.00 €, c x 2.00 €"</code>
 	 * @param coins the array of coin values based on the coinsBoxValue.
 	 * @return the string with the number and values of the coins.
 	 */
@@ -575,7 +598,7 @@ public class ParkingMeter {
 	/**
 	 * Formats the money output depending on the default local region settings. 
 	 * The value is 6 characters long, an currency string is added at the end.
-	 * Example: <code>"  3.50 â‚¬"</code>
+	 * Example: <code>"  3.50 €"</code>
 	 * @param value the value to be formated.
 	 * @param currency the currency string.
 	 * @return money the string plus currency.
